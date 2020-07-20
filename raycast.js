@@ -144,7 +144,7 @@ class Ray {
         var nextHorzTouchY = yintercept;
 
         if (this.isRayFacingUp) {
-            nextHorzTouchX--;
+            nextHorzTouchY--;
         }
 
         // increment xstep and ystep until we find a wall

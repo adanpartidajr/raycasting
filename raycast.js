@@ -1,4 +1,4 @@
-const TILE_SIZE = 32;
+const TILE_SIZE = 64;
 const MAP_NUM_ROWS = 11;
 const MAP_NUM_COLS = 15;
 
@@ -7,7 +7,7 @@ const WINDOW_HEIGHT = MAP_NUM_ROWS * TILE_SIZE;
 
 const FOV_ANGLE = 60 * (Math.PI / 180);
 
-const WALL_STRIP_WIDTH = 30;
+const WALL_STRIP_WIDTH = 1;
 const NUM_RAYS = WINDOW_WIDTH / WALL_STRIP_WIDTH; // # of rays depends on how thick the columns are and the window width
 
 class Map {
@@ -68,7 +68,7 @@ class Player { // create player class and initialize the attributes
         this.walkDirection = 0; // -1 back, 1 front
         this.rotationAngle = Math.PI / 2;
         this.moveSpeed = 2.0;
-        this.rotationSpeed = 0.5 * (Math.PI / 180);
+        this.rotationSpeed = 2 * (Math.PI / 180);
 
     }
     update() {
@@ -263,8 +263,7 @@ function castAllRays() {
     rays = []; // holds all the casted rays
 
     // loop all columns casting rays
-  //for (var i = 0; i < NUM_RAYS; i++) {
-    for (var i = 0; i < 1; i ++) {
+  for (var i = 0; i < NUM_RAYS; i++) {
         var ray = new Ray(rayAngle); // whenever a new ray is created, the passed param is the angle the ray is being created at
         ray.cast(columnID);
         rays.push(ray); // add the ray to the list of rays

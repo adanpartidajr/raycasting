@@ -1,9 +1,12 @@
 const TILE_SIZE = 32;
 const MAP_NUM_ROWS = 11;
 const MAP_NUM_COLS = 15;
+
 const WINDOW_WIDTH = MAP_NUM_COLS * TILE_SIZE;
 const WINDOW_HEIGHT = MAP_NUM_ROWS * TILE_SIZE;
+
 const FOV_ANGLE = 60 * (Math.PI / 180);
+
 const WALL_STRIP_WIDTH = 30;
 const NUM_RAYS = WINDOW_WIDTH / WALL_STRIP_WIDTH; // # of rays depends on how thick the columns are and the window width
 
@@ -65,14 +68,14 @@ class Player { // create player class and initialize the attributes
         this.walkDirection = 0; // -1 back, 1 front
         this.rotationAngle = Math.PI / 2;
         this.moveSpeed = 2.0;
-        this.rotationSpeed = 2 * (Math.PI / 180);
+        this.rotationSpeed = 0.5 * (Math.PI / 180);
 
     }
     update() {
         this.rotationAngle += this.turnDirection * this.rotationSpeed; // use turnDirection to see if i'm increasing or decreasing rotation speed
         var moveStep = this.walkDirection * this.moveSpeed; // find out how much distance will be covered
-        var newPlayerX = this.x + (moveStep * Math.cos(this.rotationAngle)); // get new player x-pos by taking old x-pos and adding the calulated x-component
-        var newPlayerY = this.y + (moveStep * Math.sin(this.rotationAngle)); // get new player y-pos by taking old y-pos and adding the calculated y-component
+        var newPlayerX = this.x + Math.cos(this.rotationAngle) * moveStep; // get new player x-pos by taking old x-pos and adding the calulated x-component
+        var newPlayerY = this.y + Math.sin(this.rotationAngle) * moveStep; // get new player y-pos by taking old y-pos and adding the calculated y-component
 
         // only set new player position if not colliding with map walls
         // as long as hasWallAt returns false (there is no wall )the player x & y pixel coordinates will update to the calculation made in update
@@ -114,23 +117,20 @@ class Ray {
     }
 
     cast(columnID) {
-
+        var xintercept, yintercept;
         var xstep, ystep; 
         ///////////////////////////////////////////
         // HORIZONTAL RAY GRID INTERSECTION CODE
         ///////////////////////////////////////////
 
-        var foundHorizontalWallHit = false;
+        var foundHorzWallHit = false;
         var wallHitX = 0;
         var wallHitY = 0;
-
-        
-        var xintercept, yintercept;
 
         yintercept = Math.floor(player.y / TILE_SIZE) * TILE_SIZE; // find the y coordinate of the closest horizontal grid intersection
         yintercept += this.isRayFacingDown ? TILE_SIZE : 0; // if rayFacingDown add tileSize to get to the bottom horizontal line
 
-        xintercept = player.x + (yintercept = player.y) / Math.tan(this.rayAngle); // find the x coordinate of the closest horizontal grid intersection
+        xintercept = player.x + (yintercept - player.y) / Math.tan(this.rayAngle); // find the x coordinate of the closest horizontal grid intersection
 
         // Calculate the increment for xstep and ystep
         ystep = TILE_SIZE
@@ -152,7 +152,7 @@ class Ray {
         while (nextHorzTouchX >= 0 && nextHorzTouchX <= WINDOW_WIDTH && nextHorzTouchY >= 0 && nextHorzTouchY <= windowHeight)  {
             if (grid.hasWallAt(nextHorzTouchX, nextHorzTouchY)) {
                 // WE FOUND A WALL 
-                foundHorizontalWallHit = true;
+                foundHorzWallHit = true;
                 wallHitX = nextHorzTouchX;
                 wallHitY = nextHorzTouchY;
 

@@ -290,13 +290,14 @@ function render3DProjectionWalls() {
     // loop every ray in the array of rays
     for (var i = 0; i < NUM_RAYS; i++) {
         var ray = rays[i];
-        var rayDistance = ray.distance;
+        // takes into account the fish eye effect by compensating for the diff. lengths of rays cast
+        var correctWallDistance = ray.distance * Math.cos(ray.rayAngle - player.rotationAngle);
 
         // calculate the distance to the projection plane
         var distanceProjectionPlane = (WINDOW_WIDTH / 2) * Math.tan(FOV_ANGLE / 2);
 
         // projected wall height
-        var wallStripHeight = (TILE_SIZE / rayDistance) * distanceProjectionPlane;
+        var wallStripHeight = (TILE_SIZE / correctWallDistance) * distanceProjectionPlane;
         
         fill("rgba(255,255,255,1.0");
         noStroke();

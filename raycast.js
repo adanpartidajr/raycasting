@@ -10,6 +10,8 @@ const FOV_ANGLE = 60 * (Math.PI / 180);
 const WALL_STRIP_WIDTH = 1;
 const NUM_RAYS = WINDOW_WIDTH / WALL_STRIP_WIDTH; // # of rays depends on how thick the columns are and the window width
 
+const MINIMAP_SCALE_FACTOR = 0.2;
+
 class Map {
     constructor() {
         this.grid =  [ // define 2d matrix to create grid to render
@@ -53,7 +55,11 @@ class Map {
                 var tileColor = this.grid[i][j] == 1 ? "#222" : "#fff"; // if the x,y coord of the grid are 1 fill with black else fill white
                 stroke("#222");
                 fill(tileColor); // fill tile color based on whether coord are 1 or not
-                rect(tileX, tileY, TILE_SIZE, TILE_SIZE); // rect function takes x-pos, y-pos, width, height params to draw rectangle
+                rect(
+                    MINIMAP_SCALE_FACTOR * tileX, 
+                    MINIMAP_SCALE_FACTOR * tileY, 
+                    MINIMAP_SCALE_FACTOR * TILE_SIZE, 
+                    MINIMAP_SCALE_FACTOR * TILE_SIZE); // rect function takes x-pos, y-pos, width, height params to draw rectangle
             }
         }
     }
@@ -92,7 +98,10 @@ class Player { // create player class and initialize the attributes
     render() {
         noStroke();
         fill("red");
-        circle(this.x,this.y,this.radius);
+        circle(
+            MINIMAP_SCALE_FACTOR * this.x,
+            MINIMAP_SCALE_FACTOR * this.y,
+            MINIMAP_SCALE_FACTOR * this.radius);
         /*stroke("red");
         line(this.x,
              this.y,
@@ -221,7 +230,11 @@ class Ray {
 
     render() {
         stroke("blue");
-        line (player.x, player.y, this.wallHitX, this.wallHitY);
+        line (
+            MINIMAP_SCALE_FACTOR * player.x, 
+            MINIMAP_SCALE_FACTOR * player.y, 
+            MINIMAP_SCALE_FACTOR * this.wallHitX, 
+            MINIMAP_SCALE_FACTOR * this.wallHitY);
         }
 }
 
@@ -273,6 +286,29 @@ function castAllRays() {
     }
 }
 
+function render3DProjectionWalls() {
+    // loop every ray in the array of rays
+    for (var i = 0; i < NUM_RAYS; i++) {
+        var ray = rays[i];
+        var rayDistance = ray.distance;
+
+        // calculate the distance to the projection plane
+        var distanceProjectionPlane = (WINDOW_WIDTH / 2) * Math.tan(FOV_ANGLE / 2);
+
+        // projected wall height
+        var wallStripHeight = (TILE_SIZE / rayDistance) * distanceProjectionPlane;
+        
+        fill("rgba(255,255,255,1.0");
+        noStroke();
+        rect(
+            i * WALL_STRIP_WIDTH,
+            (WINDOW_HEIGHT / 2) - (wallStripHeight / 2),
+            WALL_STRIP_WIDTH,
+            wallStripHeight
+        );
+    }
+}
+
 // if angle goes over 2pi, then get the remainder of the angle after dividing by 2pi
 // if the angle is negative, add 2pi to the angle to make it positive
 function normalizeAngle(angle) {
@@ -298,9 +334,10 @@ function update() {
 }
 
 function draw() {
+    clear("#212121")
     update();
-    grid.render();
-        
+    render3DProjectionWalls();
+    grid.render();    
     for (ray of rays) { // renders all rays
         ray.render();
     }

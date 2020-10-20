@@ -229,7 +229,7 @@ class Ray {
     }
 
     render() {
-        stroke("blue");
+        stroke("purple");
         line (
             MINIMAP_SCALE_FACTOR * player.x, 
             MINIMAP_SCALE_FACTOR * player.y, 
@@ -298,8 +298,12 @@ function render3DProjectionWalls() {
 
         // projected wall height
         var wallStripHeight = (TILE_SIZE / correctWallDistance) * distanceProjectionPlane;
+        // changes the opacity of the wall strip depending on the player's distance from the wall to create depth
+        var alpha  = 150.0 / correctWallDistance;
+        // shades the wall a different color depending on how the player is viewing the wall
+        var color = ray.wasHitVertical ? 255 : 180;
         
-        fill("rgba(255,255,255,1.0");
+        fill("rgba(" + color + "," + color + "," + color + "," + alpha + ")");
         noStroke();
         rect(
             i * WALL_STRIP_WIDTH,

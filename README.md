@@ -7,7 +7,7 @@ when you don't have to worry about memory allocation, data types or a lack of re
 extended to C while also leveraging SDL to create a working ray casting renderer in the style of Wolfenstein 3D.
 
 <p align='center'>
-<img src="./raycasting.gif" alt="My Project GIF" width="500" height="600">
+<img src="./raycasting.gif" alt="My Project GIF" width="320" height="320">
 </p>
 
 To run the prototype, download or clone this repository and navigate to the folder and right click on the file named "index.html" and select "Open With" and
